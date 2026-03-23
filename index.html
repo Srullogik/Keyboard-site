@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ממיר מקלדת בין עברית לאנגלית אונליין">
+  <meta name="keywords" content="ממיר מקלדת, עברית לאנגלית, תיקון הקלדה">
+  <meta name="author" content="Your Name">
+  <title>ממיר מקלדת</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      background: #f4f4f4;
+      text-align: center;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 15px;
+    }
+
+    .logo {
+      width: 60px;
+      margin-bottom: 10px;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      resize: none;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #333;
+      color: white;
+    }
+
+    button:hover {
+      background: #555;
+    }
+
+    @media (max-width: 600px) {
+      textarea {
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <!-- שים כאן את הלוגו שלך -->
+  <img src="logo.png" class="logo">
+  <h1>ממיר מקלדת</h1>
+</header>
+
+<div class="container">
+
+  <textarea id="inputText" placeholder="הכנס טקסט..."></textarea>
+  <textarea id="outputText" placeholder="התוצאה..." readonly></textarea>
+
+  <br>
+
+  <button onclick="convertToHebrew()">המר לעברית</button>
+  <button onclick="convertToEnglish()">המר לאנגלית</button>
+  <button onclick="copyText()">העתק</button>
+  <button onclick="clearText()">נקה</button>
+  <button onclick="searchGoogle()">חפש בגוגל</button>
+  <button onclick="shareText()">שתף</button>
+
+  <br><br>
+
+  <label>
+    <input type="checkbox" id="autoConvert">
+    המרה אוטומטית
+  </label>
+
+</div>
+
+<script>
+const engToHeb = {
+  a:'ש', b:'נ', c:'ב', d:'ג', e:'ק', f:'כ', g:'ע', h:'י',
+  i:'ן', j:'ח', k:'ל', l:'ך', m:'צ', n:'מ', o:'ם', p:'פ',
+  q:'/', r:'ר', s:'ד', t:'א', u:'ו', v:'ה', w:"'", x:'ס',
+  y:'ט', z:'ז'
+};
+
+const hebToEng = {};
+for (let key in engToHeb) {
+  hebToEng[engToHeb[key]] = key;
+}
+
+const input = document.getElementById("inputText");
+const output = document.getElementById("outputText");
+
+function convert(text, map) {
+  return text.split('').map(c => map[c] || c).join('');
+}
+
+function convertToHebrew() {
+  output.value = convert(input.value, engToHeb);
+}
+
+function convertToEnglish() {
+  output.value = convert(input.value, hebToEng);
+}
+
+function copyText() {
+  navigator.clipboard.writeText(output.value);
+  alert("הועתק!");
+}
+
+function clearText() {
+  input.value = "";
+  output.value = "";
+}
+
+function searchGoogle() {
+  const query = encodeURIComponent(output.value || input.value);
+  window.open(`https://www.google.com/search?q=${query}`, '_blank');
+}
+
+function shareText() {
+  const text = output.value || input.value;
+
+  if (navigator.share) {
+    navigator.share({ text });
+  } else {
+    alert("שיתוף לא נתמך בדפדפן הזה");
+  }
+}
+
+// המרה אוטומטית
+input.addEventListener("input", () => {
+  if (document.getElementById("autoConvert").checked) {
+    output.value = convert(input.value, engToHeb);
+  }
+});
+
+// PWA בסיסי (להתקנה)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+
+</body>
+</html>
